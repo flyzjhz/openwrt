@@ -22,6 +22,7 @@ PKG_MD5SUM:=536d048c8e8eeebcd9757d0863ebb0c0
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
+PKG_LICENSE:=GPL-2.0
 
 ifneq ($(CONFIG_EXTERNAL_KERNEL_TREE),"")
 PATCH_DIR:=
@@ -257,6 +258,46 @@ iptables extensions for matching ip ranges.
  Matches:
   - iprange
 
+endef
+
+define Package/iptables-mod-cluster
+$(call Package/iptables/Module, +kmod-ipt-cluster)
+  TITLE:=Match cluster extension
+endef
+
+define Package/iptables-mod-cluster/description
+iptables extensions for matching cluster.
+
+ Netfilter (IPv4/IPv6) module for matching cluster
+ This option allows you to build work-load-sharing clusters of
+ network servers/stateful firewalls without having a dedicated
+ load-balancing router/server/switch. Basically, this match returns
+ true when the packet must be handled by this cluster node. Thus,
+ all nodes see all packets and this match decides which node handles
+ what packets. The work-load sharing algorithm is based on source
+ address hashing.
+
+ This module is usable for ipv4 and ipv6.
+
+ If you select it, it enables kmod-ipt-cluster.
+
+ see `iptables -m cluster --help` for more information.
+endef
+
+define Package/iptables-mod-clusterip
+$(call Package/iptables/Module, +kmod-ipt-clusterip)
+  TITLE:=Clusterip extension
+endef
+
+define Package/iptables-mod-clusterip/description
+iptables extensions for CLUSTERIP.
+ The CLUSTERIP target allows you to build load-balancing clusters of
+ network servers without having a dedicated load-balancing
+ router/server/switch.
+
+ If you select it, it enables kmod-ipt-clusterip.
+
+ see `iptables -j CLUSTERIP --help` for more information.
 endef
 
 define Package/iptables-mod-extra
@@ -503,6 +544,8 @@ $(eval $(call BuildPlugin,iptables-mod-ipopt,$(IPT_IPOPT-m)))
 $(eval $(call BuildPlugin,iptables-mod-ipsec,$(IPT_IPSEC-m)))
 $(eval $(call BuildPlugin,iptables-mod-nat-extra,$(IPT_NAT_EXTRA-m)))
 $(eval $(call BuildPlugin,iptables-mod-iprange,$(IPT_IPRANGE-m)))
+$(eval $(call BuildPlugin,iptables-mod-cluster,$(IPT_CLUSTER-m)))
+$(eval $(call BuildPlugin,iptables-mod-clusterip,$(IPT_CLUSTERIP-m)))
 $(eval $(call BuildPlugin,iptables-mod-ulog,$(IPT_ULOG-m)))
 $(eval $(call BuildPlugin,iptables-mod-hashlimit,$(IPT_HASHLIMIT-m)))
 $(eval $(call BuildPlugin,iptables-mod-led,$(IPT_LED-m)))
@@ -518,3 +561,31 @@ $(eval $(call BuildPackage,libiptc))
 $(eval $(call BuildPackage,libip4tc))
 $(eval $(call BuildPackage,libip6tc))
 $(eval $(call BuildPackage,libxtables))
+
+
+define Package/iptables-mod-weburl
+$(call Package/iptables/Module, +kmod-ipt-weburl)
+  TITLE:=weburl
+endef
+$(eval $(call BuildPlugin,iptables-mod-weburl,$(IPT_WEBURL-m)))
+
+
+define Package/iptables-mod-webmon
+$(call Package/iptables/Module, +kmod-ipt-webmon)
+  TITLE:=webmon
+endef
+$(eval $(call BuildPlugin,iptables-mod-webmon,$(IPT_WEBMON-m)))
+
+
+define Package/iptables-mod-timerange
+$(call Package/iptables/Module, +kmod-ipt-timerange)
+  TITLE:=timerange
+endef
+$(eval $(call BuildPlugin,iptables-mod-timerange,$(IPT_TIMERANGE-m)))
+
+
+define Package/iptables-mod-bandwidth
+$(call Package/iptables/Module, +kmod-ipt-bandwidth)
+  TITLE:=bandwidth
+endef
+$(eval $(call BuildPlugin,iptables-mod-bandwidth,$(IPT_BANDWIDTH-m)))

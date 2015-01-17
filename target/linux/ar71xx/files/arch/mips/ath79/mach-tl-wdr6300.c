@@ -30,7 +30,7 @@
 #include "dev-wmac.h"
 #include "machtypes.h"
 #include "pci.h"
-#include "eeprom.h"
+#include "tplink-wmac.h"
 
 #define WDR6300_GPIO_LED_WLAN2G                13
 #define WDR6300_GPIO_LED_SYSTEM                14
@@ -94,8 +94,6 @@ static struct gpio_keys_button wdr6300_gpio_keys[] __initdata = {
 static void __init wdr6300_setup(void)
 {
 	u8 *mac = (u8 *) KSEG1ADDR(0x1f01fc00);
-	u8 *art = ath79_get_eeprom();
-	u8 tmpmac[ETH_ALEN];
 
 	ath79_register_m25p80(&wdr6300_flash_data);
 	ath79_register_leds_gpio(-1, ARRAY_SIZE(wdr6300_leds_gpio),
@@ -104,12 +102,8 @@ static void __init wdr6300_setup(void)
 					ARRAY_SIZE(wdr6300_gpio_keys),
 					wdr6300_gpio_keys);
 
-	ath79_init_mac(tmpmac, mac, 0);
-	ath79_register_wmac(art + WDR6300_WMAC_CALDATA_OFFSET, tmpmac);
+    tplink_register_builtin_wmac1(WDR6300_WMAC_CALDATA_OFFSET, mac, 0);
 
-//	ath79_init_mac(tmpmac, mac, 1);
-//	ap9x_pci_setup_wmac_led_pin(0, 0);
-//	ap91_pci_init(art + WDR6300_PCIE_CALDATA_OFFSET, tmpmac);
 	ath79_register_pci();
 
 	ath79_setup_ar934x_eth_cfg(AR934X_ETH_CFG_SW_ONLY_MODE);

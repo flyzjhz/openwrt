@@ -43,9 +43,14 @@ get_status_led() {
 	cap4200ag)
 		status_led="senao:green:pwr"
 		;;
+	cpe510)
+		status_led="tp-link:green:link4"
+		;;
 	db120)
 		status_led="db120:green:status"
 		;;
+	dgl-5500-a1 |\
+	dhp-1565-a1|\
 	dir-505-a1 |\
 	dir-600-a1 |\
 	dir-615-e1 |\
@@ -62,6 +67,9 @@ get_status_led() {
 	dir-835-a1)
 		status_led="d-link:amber:power"
 		;;
+	dragino2)
+		status_led="dragino2:red:system"
+		;;
 	eap300v2)
 		status_led="engenius:blue:power"
 		;;
@@ -70,7 +78,10 @@ get_status_led() {
 		;;
 	el-mini | \
 	el-m150)
-		status_led="EasyLink:green:system"
+		status_led="easylink:green:system"
+		;;
+	f9k1115v2)
+		status_led="belkin:blue:status"
 		;;
 	gl-inet)
 		status_led="gl-connect:green:lan"
@@ -99,6 +110,10 @@ get_status_led() {
 		;;
 	mr600v2)
 		status_led="mr600:blue:power"
+		;;
+	mr900 | \
+	mr900v2)
+		status_led="mr900:blue:power"
 		;;
 	mynet-n600 | \
 	mynet-n750)
@@ -199,6 +214,7 @@ get_status_led() {
 	tl-wa901nd | \
 	tl-wa901nd-v2 | \
 	tl-wa901nd-v3 | \
+    tl-wdr3320-v2 | \
 	tl-wdr3500 | \
 	tl-wdr6300 | \
 	tl-wr1041n-v2 | \
@@ -211,7 +227,8 @@ get_status_led() {
 	tl-wr841n-v8 | \
 	tl-wa830re-v2 | \
 	tl-wr842n-v2 | \
-	tl-wr941nd)
+	tl-wr941nd | \
+	tl-wr941nd-v7)
 		status_led="tp-link:green:system"
 		;;
 	archer-c5 | \
@@ -219,6 +236,7 @@ get_status_led() {
 	tl-wdr4900-v2 | \
 	tl-mr10u | \
 	tl-mr13u | \
+    mw4530r | \
 	tl-wdr4300 | \
 	tl-wr703n | \
 	tl-wr710n | \
@@ -230,6 +248,9 @@ get_status_led() {
 		;;
 	tl-wr2543n)
 		status_led="tp-link:green:wps"
+		;;
+	tl-wr882n-v1)
+		status_led="tp-link:white:status"
 		;;
 	tube2h)
 		status_led="alfa:green:signal4"
@@ -256,6 +277,7 @@ get_status_led() {
 	wzr-hp-g300nh2)
 		status_led="buffalo:red:diag"
 		;;
+	r6100 | \
 	wndap360 | \
 	wndr3700 | \
 	wndr3700v4 | \
@@ -292,6 +314,9 @@ set_state() {
 		;;
 	failsafe)
 		status_led_blink_failsafe
+		;;
+	preinit_regular)
+		status_led_blink_preinit_regular
 		;;
 	done)
 		status_led_on

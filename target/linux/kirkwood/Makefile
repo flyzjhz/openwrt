@@ -11,12 +11,12 @@ BOARD:=kirkwood
 BOARDNAME:=Marvell Kirkwood
 FEATURES:=targz usb jffs2_nand nand ubifs
 CPU_TYPE:=xscale
-MAINTAINER:=Imre Kaloz <kaloz@openwrt.org>
+MAINTAINER:=Luka Perkov <luka@openwrt.org>
 
-LINUX_VERSION:=3.14.18
+KERNEL_PATCHVER:=3.14
 
 include $(INCLUDE_DIR)/target.mk
 
-KERNELNAME:="zImage dtbs"
+KERNELNAME:=zImage dtbs
 
 $(eval $(call BuildTarget))

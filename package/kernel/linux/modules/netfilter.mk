@@ -517,6 +517,54 @@ endef
 
 $(eval $(call KernelPackage,ipt-iprange))
 
+define KernelPackage/ipt-cluster
+  TITLE:=Module for matching cluster
+  KCONFIG:=$(KCONFIG_IPT_CLUSTER)
+  FILES:=$(foreach mod,$(IPT_CLUSTER-m),$(LINUX_DIR)/net/$(mod).ko)
+  AUTOLOAD:=$(call AutoProbe,$(notdir $(IPT_CLUSTER-m)))
+  $(call AddDepends/ipt)
+endef
+
+define KernelPackage/ipt-cluster/description
+ Netfilter (IPv4/IPv6) module for matching cluster
+ This option allows you to build work-load-sharing clusters of
+ network servers/stateful firewalls without having a dedicated
+ load-balancing router/server/switch. Basically, this match returns
+ true when the packet must be handled by this cluster node. Thus,
+ all nodes see all packets and this match decides which node handles
+ what packets. The work-load sharing algorithm is based on source
+ address hashing.
+
+ This module is usable for ipv4 and ipv6.
+
+ To use it also enable iptables-mod-cluster
+
+ see `iptables -m cluster --help` for more information.
+endef
+
+$(eval $(call KernelPackage,ipt-cluster))
+
+define KernelPackage/ipt-clusterip
+  TITLE:=Module for CLUSTERIP
+  KCONFIG:=$(KCONFIG_IPT_CLUSTERIP)
+  FILES:=$(foreach mod,$(IPT_CLUSTERIP-m),$(LINUX_DIR)/net/$(mod).ko)
+  AUTOLOAD:=$(call AutoProbe,$(notdir $(IPT_CLUSTERIP-m)))
+  $(call AddDepends/ipt,+kmod-nf-conntrack)
+endef
+
+define KernelPackage/ipt-clusterip/description
+ Netfilter (IPv4-only) module for CLUSTERIP
+ The CLUSTERIP target allows you to build load-balancing clusters of
+ network servers without having a dedicated load-balancing
+ router/server/switch.
+
+ To use it also enable iptables-mod-clusterip
+
+ see `iptables -j CLUSTERIP --help` for more information.
+endef
+
+$(eval $(call KernelPackage,ipt-clusterip))
+
 
 define KernelPackage/ipt-extra
   TITLE:=Extra modules
@@ -794,3 +842,47 @@ endef
 
 $(eval $(call KernelPackage,nft-nat6))
 
+
+
+define KernelPackage/ipt-weburl
+  SUBMENU:=$(NF_MENU)
+  TITLE:=weburl
+  KCONFIG:=$(KCONFIG_IPT_WEBURL)
+  FILES:=$(LINUX_DIR)/net/ipv4/netfilter/*weburl*.$(LINUX_KMOD_SUFFIX)
+  AUTOLOAD:=$(call AutoLoad,45,$(notdir $(IPT_WEBURL-m)))
+	DEPENDS:= kmod-ipt-core
+endef
+$(eval $(call KernelPackage,ipt-weburl))
+
+
+define KernelPackage/ipt-webmon
+  SUBMENU:=$(NF_MENU)
+  TITLE:=webmon
+  KCONFIG:=$(KCONFIG_IPT_WEBMON)
+  FILES:=$(LINUX_DIR)/net/ipv4/netfilter/*webmon*.$(LINUX_KMOD_SUFFIX)
+  AUTOLOAD:=$(call AutoLoad,45,$(notdir $(IPT_WEBMON-m)))
+	DEPENDS:= kmod-ipt-core
+endef
+$(eval $(call KernelPackage,ipt-webmon))
+
+
+define KernelPackage/ipt-timerange
+  SUBMENU:=$(NF_MENU)
+  TITLE:=timerange
+  KCONFIG:=$(KCONFIG_IPT_TIMERANGE)
+  FILES:=$(LINUX_DIR)/net/ipv4/netfilter/*timerange*.$(LINUX_KMOD_SUFFIX)
+  AUTOLOAD:=$(call AutoLoad,45,$(notdir $(IPT_TIMERANGE-m)))
+	DEPENDS:= kmod-ipt-core
+endef
+$(eval $(call KernelPackage,ipt-timerange))
+
+
+define KernelPackage/ipt-bandwidth
+  SUBMENU:=$(NF_MENU)
+  TITLE:=bandwidth
+  KCONFIG:=$(KCONFIG_IPT_BANDWIDTH)
+  FILES:=$(LINUX_DIR)/net/ipv4/netfilter/*bandwidth*.$(LINUX_KMOD_SUFFIX)
+  AUTOLOAD:=$(call AutoLoad,45,$(notdir $(IPT_BANDWIDTH-m)))
+	DEPENDS:= kmod-ipt-core
+endef
+$(eval $(call KernelPackage,ipt-bandwidth))

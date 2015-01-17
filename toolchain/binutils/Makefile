@@ -24,12 +24,6 @@ else
   ifeq ($(PKG_VERSION),2.20.1)
     PKG_MD5SUM:=9cdfb9d6ec0578c166d3beae5e15c4e5
   endif
-  ifeq ($(PKG_VERSION),2.22)
-    PKG_MD5SUM:=ee0f10756c84979622b992a4a61ea3f5
-  endif
-  ifeq ($(PKG_VERSION),2.23.1)
-    PKG_MD5SUM:=33adb18c3048d057ac58d07a3f1adb38
-  endif
 endif
 
 HOST_BUILD_PARALLEL:=1
@@ -47,6 +41,7 @@ BINUTILS_CONFIGURE:= \
 		--host=$(GNU_HOST_NAME) \
 		--target=$(REAL_GNU_TARGET_NAME) \
 		--with-sysroot=$(TOOLCHAIN_DIR) \
+		--enable-plugins \
 		--disable-multilib \
 		--disable-werror \
 		--disable-nls \
@@ -69,8 +64,9 @@ endif
 
 define Host/Prepare
 	$(call Host/Prepare/Default)
-	ln -snf $(PKG_NAME)-$(PKG_VERSION) $(BUILD_DIR_TOOLCHAIN)/$(PKG_NAME)
+	ln -snf $(notdir $(HOST_BUILD_DIR)) $(BUILD_DIR_TOOLCHAIN)/$(PKG_NAME)
 	$(CP) $(SCRIPT_DIR)/config.{guess,sub} $(HOST_BUILD_DIR)/
+	$(SED) 's, " Linaro.*,,' $(HOST_BUILD_DIR)/bfd/version.h
 endef
 
 define Host/Configure
@@ -88,9 +84,11 @@ define Host/Install
 	$(MAKE) -C $(HOST_BUILD_DIR) \
 		prefix=$(TOOLCHAIN_DIR)/initial \
 		install
+	$(MAKE) -C $(HOST_BUILD_DIR) \
+		prefix=$(TOOLCHAIN_DIR) \
+		install
 	$(call FixupLibdir,$(TOOLCHAIN_DIR)/initial)
 	$(RM) $(TOOLCHAIN_DIR)/initial/lib/libiberty.a
-	$(CP) $(TOOLCHAIN_DIR)/initial/. $(TOOLCHAIN_DIR)/
 	$(CP) $(TOOLCHAIN_DIR)/bin/$(REAL_GNU_TARGET_NAME)-readelf $(REAL_STAGING_DIR_HOST)/bin/readelf
 endef
 

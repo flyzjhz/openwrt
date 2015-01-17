@@ -19,9 +19,11 @@ lookup_phy() {
 
 	local macaddr="$(config_get "$device" macaddr | tr 'A-Z' 'a-z')"
 	[ -n "$macaddr" ] && {
-		for _phy in $(ls /sys/class/ieee80211 2>/dev/null); do
-			[ "$macaddr" = "$(cat /sys/class/ieee80211/${_phy}/macaddress)" ] || continue
-			phy="$_phy"
+		for _phy in /sys/class/ieee80211/*; do
+			[ -e "$_phy" ] || continue
+
+			[ "$macaddr" = "$(cat ${_phy}/macaddress)" ] || continue
+			phy="${_phy##*/}"
 			return
 		done
 	}
@@ -65,7 +67,12 @@ detect_mac80211() {
 		[ -n "$type" ] || break
 		devidx=$(($devidx + 1))
 	done
-	for dev in $(ls /sys/class/ieee80211); do
+
+	for _dev in /sys/class/ieee80211/*; do
+		[ -e "$_dev" ] || continue
+
+		dev="${_dev##*/}"
+
 		found=0
 		config_foreach check_mac80211_device wifi-device
 		[ "$found" -gt 0 ] && continue
@@ -95,6 +102,12 @@ detect_mac80211() {
 			dev_id="	option macaddr	$(cat /sys/class/ieee80211/${dev}/macaddress)"
 		fi
 
+		if [ x$mode_band == x"a" ]; then
+			ssid_5ghz="-5GHz"
+		else
+			ssid_5ghz="-2.4GHz"
+		fi
+
 		cat <<EOF
 config wifi-device  radio$devidx
 	option type     mac80211
@@ -109,7 +122,7 @@ config wifi-iface
 	option device   radio$devidx
 	option network  lan
 	option mode     ap
-	option ssid     OpenWrt-$(cat /sys/class/ieee80211/${dev}/macaddress | awk -F ":" '{print $4""$5""$6 }'| tr a-z A-Z)
+	option ssid     OpenWrt${ssid_5ghz}-$(cat /sys/class/ieee80211/${dev}/macaddress | awk -F ":" '{print $4""$5""$6 }'| tr a-z A-Z)
 	option encryption none
 	option wds 1
 
